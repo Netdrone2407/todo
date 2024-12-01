@@ -4,7 +4,6 @@ const morgan=require('morgan');
 const connectDB=require('./mydb');
 
 const user=require('./user')
-const PORT =3000;
 connectDB();
 app.use(morgan('dev'));
 app.use(express.json());
