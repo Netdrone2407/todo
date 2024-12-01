@@ -1,118 +1,245 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { Alert, Button, FlatList, Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+//import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+type TodoItem = {
+  _id: string;
+  name: string;
+};
+const App=()=>{
+  const [todo,settodo]=useState<TodoItem[]>([]);
+  const [visible,setvisible]=useState(false);
+  const [it,setit]=useState("");
+  const [change,setchange]=useState("");
+  //const [todo,settodo]=useState([]);
+  const [newtask,settask]=useState("");
+  const api="http://192.168.57.59:3000/api/users";
+  useEffect(()=>{
+    //loadData();
+    fetch();
+  },[]);
+  // const loadData=async()=>{
+  //   try{
+  // const saved=await AsyncStorage.getItem("todos");
+  // if(saved){
+  //   settodo(JSON.parse(saved));
+  // }
+  //   }
+  //   catch(error){
+  //     console.log("failed to load data");
+  //   }
+  // }
+  // const saveData=async(data:TodoItem[])=>{
+  //   try{
+  //    await AsyncStorage.setItem("todos",JSON.stringify(data));
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  //   }
+  //   catch(error){
+  //     console.log("failed to save data");
+  //   }
+  // }
+  const fetch=async()=>{  
+   try{
+    const res=await axios.get(api);
+    settodo(res.data);
+    //saveData(res.data);
+   }
+   catch(error){
+    console.log("not found");
+   }
   };
+  const add=async()=>{
+    if (!newtask.trim()) {
+    Alert.alert("Add a task");
+      return;
+    }
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    try{
+      const resp=await axios.post(api,{name:newtask});
+      const updateddata=[...todo,resp.data];
+      settodo(updateddata);
+     // saveData(updateddata);
+      settask("");
+
+    }
+    catch(error){
+      console.log(error);
+    }
+  };
+  const deleting=async(id:string)=>{
+   try{
+    await axios.delete(`${api}/${id}`);
+    settodo(todo.filter(todo=>todo._id!==id));
+   }
+   catch(error){
+    console.error('Error deleting todo:', error);
+   }
+  };
+  const putting=async(id:string)=>{
+    try{
+       const userd= await axios.put(`${api}/${id}`,{name:change});
+       fetch();
+        console.log('Updated User:', userd.data);
+    }
+    catch(error){
+      console.log("error updating",error);
+    }
+  };
+  const handleInputChange = (text: string) => {
+    if (text.trim() === '') {
+      Alert.alert('Validation Error', 'Text input cannot be empty.');
+      return;
+    }
+    if (text.length <= 25) {
+      setchange(text);
+    } else {
+      Alert.alert('Validation Error', 'Text input cannot exceed 25 characters.');
+    }
+  };
+  const handleInputChange1 = (text: string) => {
+    if (text.trim() === '') {
+      Alert.alert('Validation Error', 'Text input cannot be empty.');
+      return;
+    }
+    if (text.length <= 25) {
+      settask(text);
+    } else {
+      Alert.alert('Validation Error', 'Text input cannot exceed 25 characters.');
+    }
+  };
+    return (
+      
+      <SafeAreaView style={styles.main}>
+        <View style={styles.first}>
+          <Text style={styles.heading}>Tasks</Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
+        <View style={styles.second} >
+          <TextInput style={styles.input} onChangeText={handleInputChange1} placeholder='Add new task' value={newtask} placeholderTextColor={'red'} />
+          <Button title='ADD' onPress={add}/>
+        </View>
+        <View style={styles.middle}>
+          <Text style={styles.firsttext}>To-Do List :</Text>
+          <Modal animationType="slide"
+        transparent={true}
+        visible={visible}
+        onRequestClose={() => setvisible(false)} // Android back button
+      >
+        <View style={styles.modalOverlay}>
+                  <View style={styles.modalView}>
+          
+                   <TextInput style={styles.input} onChangeText={handleInputChange}  value={change} placeholderTextColor={'red'} /> 
+                  <View style={styles.sec}>
+                    <View style={styles.btn}>
+                    <Button title={"Save"} onPress={()=>{setvisible(false);putting(it)}}/>
+                      </View>
+                      <View style={styles.btn}>
+                    <Button title={"Delete"} onPress={()=>{setvisible(false);deleting(it)}}/></View>
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+                  </View>
+          </View>
+        </View> 
+      </Modal>
+         <View style={styles.list}>
+          <FlatList
+     
+  data={todo} keyExtractor={(item)=>item._id.toString()}
+  renderItem={({item})=>(
+            <View style={styles.once}>  
+             {/* <Text style={styles.indi}>{item._id}</Text> */}
+              <Text style={styles.indi}>{item.name}</Text>
+              <TouchableOpacity onPress={()=>{setvisible(true);setit(item._id);setchange(item.name)}}>
+              <Image source={require("./components/image.png")} style={styles.img}/>
+              </TouchableOpacity>
+              </View>
+    )}
+
+/>
+
+</View>
+        </View>
+      </SafeAreaView>
+    )
+};
+const styles=StyleSheet.create({
+    main:{
+        flex:1,
+        backgroundColor:'#fff'
+    },
+    first:{
+      height:40,
+      justifyContent:'center',
+      alignItems:'center',
+      borderBottomWidth:2
+    },
+    second:{
+      height:50,
+      flexDirection:'row'
+    },
+    middle:{
+      flex:1
+    },
+    heading:{
+      fontSize:20,
+    },
+    firsttext:{
+       fontSize:20
+    },
+    input:{
+      flex:1,
+      borderColor:'red',
+      borderBottomWidth:2,
+      fontSize:20,
+      
+    },
+    list:{
+       marginBottom:20
+    },
+    once:{
+      flexDirection:"row",
+       height:60,
+       borderWidth:2,
+       margin:10,
+       borderRadius:10,
+       justifyContent:"space-between",
+       padding:3
+      
+    },
+    indi:{
+      fontSize:20,
+      margin:10
+
+    },
+    img:{
+      height:50,
+      width:50,
+      
+     
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+       backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      
+    },
+    modalView:{
+      borderWidth:2,
+      height:150,
+      width:300,
+      backgroundColor:"#fff",
+
+    },
+    sec:{
+      margin:20,
+       flexDirection:'row',
+       justifyContent:'space-evenly'
+    },
+    btn:{
+      height:40,
+      width:70
+    } 
+   
+    
 });
-
 export default App;
