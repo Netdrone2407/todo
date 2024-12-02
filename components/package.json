@@ -4,8 +4,7 @@
   "main": "connect.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "server-backend": "node connect.js",
-    "start":"npm run server-backend"
+    "start": "node connect.js"
   },
   "keywords": [],
   "author": "",

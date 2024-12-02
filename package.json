@@ -7,9 +7,8 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "test": "jest",
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-  "start-frontend": "npm start",
-  "start-backend": "cd components && npm start" 
+    "start": "npm run start-backend",
+  "start-backend": "cd components && npm run start" 
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",

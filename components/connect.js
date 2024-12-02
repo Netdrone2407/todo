@@ -7,7 +7,10 @@ const user=require('./user')
 connectDB();
 app.use(morgan('dev'));
 app.use(express.json());
-
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
+  });
+  
 app.get('/api/users',async(req,res)=>{
     try{        
     const detail=await user.find();
@@ -51,6 +54,6 @@ app.put('/api/users/:id', async (req, res) => {
       res.status(500).send(error);
     }
   });
-  app.listen(process.env.PORT || 10000, () => {
-    console.log(`Server running on port ${process.env.PORT || 10000}`);
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server running on port ${process.env.PORT || 3000}`);
   });
