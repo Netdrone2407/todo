@@ -51,6 +51,6 @@ app.put('/api/users/:id', async (req, res) => {
       res.status(500).send(error);
     }
   });
-  app.listen(process.env.PORT || 3000, () => {
-    console.log(`Server running on port ${process.env.PORT || 3000}`);
+  app.listen(process.env.PORT || 10000, () => {
+    console.log(`Server running on port ${process.env.PORT || 10000}`);
   });

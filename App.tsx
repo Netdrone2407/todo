@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { Alert, Button, FlatList, Image, Modal, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-//import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type TodoItem = {
   _id: string;
@@ -14,36 +14,36 @@ const App=()=>{
   const [change,setchange]=useState("");
   //const [todo,settodo]=useState([]);
   const [newtask,settask]=useState("");
-  const api="http://192.168.57.59:3000/api/users";
+  const api="http://todo-app-1eon-render.com/api/users";
   useEffect(()=>{
-    //loadData();
+    loadData();
     fetch();
   },[]);
-  // const loadData=async()=>{
-  //   try{
-  // const saved=await AsyncStorage.getItem("todos");
-  // if(saved){
-  //   settodo(JSON.parse(saved));
-  // }
-  //   }
-  //   catch(error){
-  //     console.log("failed to load data");
-  //   }
-  // }
-  // const saveData=async(data:TodoItem[])=>{
-  //   try{
-  //    await AsyncStorage.setItem("todos",JSON.stringify(data));
+  const loadData=async()=>{
+    try{
+  const saved=await AsyncStorage.getItem("todos");
+  if(saved){
+    settodo(JSON.parse(saved));
+  }
+    }
+    catch(error){
+      console.log("failed to load data");
+    }
+  }
+  const saveData=async(data:TodoItem[])=>{
+    try{
+     await AsyncStorage.setItem("todos",JSON.stringify(data));
 
-  //   }
-  //   catch(error){
-  //     console.log("failed to save data");
-  //   }
-  // }
+    }
+    catch(error){
+      console.log("failed to save data");
+    }
+  }
   const fetch=async()=>{  
    try{
     const res=await axios.get(api);
     settodo(res.data);
-    //saveData(res.data);
+    saveData(res.data);
    }
    catch(error){
     console.log("not found");
@@ -59,7 +59,7 @@ const App=()=>{
       const resp=await axios.post(api,{name:newtask});
       const updateddata=[...todo,resp.data];
       settodo(updateddata);
-     // saveData(updateddata);
+      saveData(updateddata);
       settask("");
 
     }
