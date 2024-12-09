@@ -12,6 +12,7 @@ const App=()=>{
   const [visible,setvisible]=useState(false);
   const [it,setit]=useState("");
   const [change,setchange]=useState("");
+  const [isAdd,setisAdd]=useState(false);
   //const [todo,settodo]=useState([]);
   const [newtask,settask]=useState("");
   const api="https://todo-app-1eon.onrender.com/api/users";
@@ -54,17 +55,21 @@ const App=()=>{
     Alert.alert("Add a task");
       return;
     }
-
+    setisAdd(true);
     try{
       const resp=await axios.post(api,{name:newtask});
       const updateddata=[...todo,resp.data];
       settodo(updateddata);
       saveData(updateddata);
-      settask("");
+    
 
     }
     catch(error){
       console.log(error);
+    }
+    finally{
+      settask("");
+      setisAdd(false);
     }
   };
   const deleting=async(id:string)=>{
@@ -79,7 +84,7 @@ const App=()=>{
   const putting=async(id:string)=>{
     try{
        const userd= await axios.put(`${api}/${id}`,{name:change});
-       fetch();
+     
         console.log('Updated User:', userd.data);
     }
     catch(error){
@@ -115,8 +120,8 @@ const App=()=>{
           <Text style={styles.heading}>Tasks</Text>
         </View>
         <View style={styles.second} >
-          <TextInput style={styles.input} onChangeText={handleInputChange1} placeholder='Add new task' value={newtask} placeholderTextColor={'red'} />
-          <Button title='ADD' onPress={add}/>
+          <TextInput style={styles.input} onChangeText={handleInputChange1} placeholder='Add new task' value={newtask} placeholderTextColor={'red'} editable={!isAdd} />
+          <Button title='ADD' onPress={add} disabled={isAdd}/>
         </View>
         <View style={styles.middle}>
           <Text style={styles.firsttext}>To-Do List :</Text>
