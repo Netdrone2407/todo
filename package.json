@@ -8,13 +8,14 @@
     "lint": "eslint .",
     "test": "jest",
     "start": "npm run start-backend",
-  "start-backend": "cd components && npm run start" 
+    "start-backend": "cd components && npm run start"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",
     "axios": "^1.7.7",
     "react": "18.3.1",
     "react-native": "0.76.2",
+    "react-native-device-info": "^14.0.1",
     "react-native-dialog": "^9.3.0",
     "react-native-make": "^1.0.1"
   },

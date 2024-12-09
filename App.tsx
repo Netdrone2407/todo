@@ -14,7 +14,7 @@ const App=()=>{
   const [change,setchange]=useState("");
   //const [todo,settodo]=useState([]);
   const [newtask,settask]=useState("");
-  const api="http://todo-app-1eon-render.com/api/users";
+  const api="https://todo-app-1eon.onrender.com/api/users";
   useEffect(()=>{
     loadData();
     fetch();
